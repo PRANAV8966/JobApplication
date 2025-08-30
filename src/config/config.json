@@ -1,7 +1,7 @@
 {
   "development": {
     "username": "root",
-    "password": "<YOUR_DB_PASSWORD>",
+    "password": ".Pranav@123",
     "database": "jobAppdb",
     "host": "127.0.0.1",
     "dialect": "mysql"

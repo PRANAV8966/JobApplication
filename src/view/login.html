@@ -44,11 +44,10 @@
                     return;
                 }
 
-                console.log(result);
                 localStorage.setItem("token", result.newToken);
 
                 alert('Log-In successfull');
-                window.location.href = "features.html";
+                window.location.href = "dashboard.html";
             } catch (error) {
                 alert('Log-In failed! error code:404 | USER NOT FOUND!!');
                 console.log(error);

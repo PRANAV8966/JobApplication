@@ -3,6 +3,7 @@ const app = express();
 const cors = require('cors');
 const { PORT } = require('./src/config/server-config.js');
 const apiRoutes = require('./src/routes/index.js');
+console.log(apiRoutes);
 
 const startServer = async () => {
 

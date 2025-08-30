@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', function () {
       alert('Registration successful!');
       form.reset();
     } catch (error) {
+      console.log('this is the error', error);
       alert('Registration failed!');
     }
      });
