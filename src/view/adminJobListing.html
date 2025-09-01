@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Job Listings</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: #f4f6f9;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 30px;
+    }
+
+    #jobListings {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      max-width: 1100px;
+      margin: auto;
+    }
+
+    .job-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .job-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+    }
+
+    .job-card h3 {
+      margin: 0 0 10px;
+      color: #2980b9;
+      font-size: 20px;
+    }
+
+    .job-card p {
+      margin: 5px 0;
+      color: #555;
+      font-size: 14px;
+    }
+
+    .status {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+      color: #fff;
+    }
+
+    .status.active {
+      background: #27ae60;
+    }
+
+    .status.expired {
+      background: #c0392b;
+    }
+
+    .no-jobs {
+      text-align: center;
+      font-size: 18px;
+      color: #777;
+      margin-top: 40px;
+    }
+
+    .back-btn {
+      display: block;
+      width: max-content;
+      margin: 0 auto 20px auto;
+      padding: 10px 20px;
+      background: #3498db;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: background 0.3s;
+    }
+
+    .back-btn:hover {
+      background: #2980b9;
+    }
+  </style>
+</head>
+<body>
+  <a href="adminDashboard.html" class="back-btn">⬅ Back to Dashboard</a>
+  <h1>My Job Listings</h1>
+  <div id="jobListings"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script>
+    const ip = "localhost"; // change to your server IP
+    const adminId = localStorage.getItem("adminId"); // assuming stored after login
+
+    async function loadJobs() {
+      try {
+        const res = await axios.get(`http://${ip}:3000/api/getJobs/${adminId}`);
+        const jobs = res.data.data;
+        const jobListings = document.getElementById("jobListings");
+        jobListings.innerHTML = "";
+
+        if (jobs.length === 0) {
+          jobListings.innerHTML = "<p class='no-jobs'>😕 No jobs uploaded yet.</p>";
+          return;
+        }
+
+        jobs.forEach(job => {
+          const div = document.createElement("div");
+          div.classList.add("job-card");
+          div.innerHTML = `
+            <h3>${job.description}</h3>
+            <p><strong>Status:</strong> 
+              <span class="status ${job.status.toLowerCase()}">${job.status}</span>
+            </p>
+            <p><strong>Expiry:</strong> ${new Date(job.expiry).toLocaleDateString()}</p>
+          `;
+          jobListings.appendChild(div);
+        });
+      } catch (err) {
+        console.error(err);
+        alert("Failed to load jobs");
+      }
+    }
+
+    loadJobs();
+  </script>
+</body>
+</html>

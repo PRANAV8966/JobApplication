@@ -1,29 +1,28 @@
-const { UserRepository } = require('../repository/user-repository.js');
+const { AdminRepository } = require('../repository/admin-repository.js');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { jwtKey } = require('../config/server-config.js');
 
-
-class UserService {
+class AdminService {
 
      constructor() {
-        this.userService =  new UserRepository();
+        this.adminService =  new AdminRepository();
     }
 
      async create(data) {
         try {
-            const user = await this.userService.create(data);
-            return user;
+            const admin = await this.adminService.create(data);
+            return admin;
         } catch (error) {
             console.log('some error occured at service', error);
             throw error;
         }
      }
 
-     async getUser(id) {
+     async getAdmin(id) {
         try {
-            const user = await this.userService.getUser(id);
-            return user;
+            const admin = await this.adminService.getUser(id);
+            return admin;
         } catch (error) {
             console.log('some error occured at service', error);
             throw error;
@@ -32,18 +31,18 @@ class UserService {
 
      async destroy(id) {
         try {
-            const user = await this.userService.destroy(id);
-            return user;
+            const admin = await this.adminService.destroy(id);
+            return admin;
         } catch (error) {
             console.log('some error occured at service', error);
             throw error;
         }
      }
 
-     async getAllUser() {
+     async getAllAdmins() {
         try {
-            const users = await this.userService.getAllUser();
-            return users;
+            const admins = await this.adminService.getAllUser();
+            return admins;
         } catch (error) {
             console.log('some error occured at service', error);
             throw error;
@@ -52,18 +51,18 @@ class UserService {
 
      async signIn(data) {
         try {
-            const user = await this.userService.signIn(data.email);
-            if (!user) {
+            const admin = await this.adminService.signIn(data.email);
+            if (!admin) {
                 throw {error:'404:user not found!!'}
             }
-            const status = await this.#checkPassword(data.password, user.password);
+            const status = await this.#checkPassword(data.password, admin.password);
 
             if(!status) {
                 throw {error:'incorrect user details'};
             }
 
-            const newToken = await this.createToken({email:user.email, id:user.id});
-            return {...user, newToken};
+            const newToken = await this.createToken({email:admin.email, id:admin.id});
+            return {...admin, newToken};
         } catch (error) {
             console.log('some error occured at service', error);
             throw error;
@@ -90,9 +89,9 @@ class UserService {
         }
     }
 
-    #checkPassword(userPlainInputPassword, encryptedPassword) {
+    #checkPassword(adminPlainInputPassword, encryptedPassword) {
         try {
-            const response = bcrypt.compareSync(userPlainInputPassword, encryptedPassword);
+            const response = bcrypt.compareSync(adminPlainInputPassword, encryptedPassword);
             return response;
         } catch (error) {
             console.log('password validation failed');
@@ -102,5 +101,5 @@ class UserService {
 }
 
 module.exports = {
-    UserService
+    AdminService
 }

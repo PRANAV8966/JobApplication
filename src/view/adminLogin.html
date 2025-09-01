@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login Page</title>
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Admin Log-In</h1>
+    <div class="form-wrapper">
+      <form class="signup-form" onsubmit="handleLogin(event)">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+
+        <button type="submit">Log-In</button>
+      </form>
+      <button type="button" class="forgot-btn" onclick="window.location.href='forgot-password.html'">Forgot Password?</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        const ip = 'localhost';
+        async function handleLogin(event) {
+            try {
+                event.preventDefault();
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+
+                const response = await axios.post(`http://${ip}:3000/api/adminSignIn`, {
+                    email,
+                    password
+                });
+
+                const result = response.data.data;
+
+                if (!result || !result.newToken || !result.dataValues.id) {
+                    alert('Log-In failed! Invalid credentials or server error.');
+                    console.log(result, result.newToken, result.dataValues.id);
+                    window.location.href = "adminLogin.html";
+                    return;
+                }
+
+                localStorage.setItem("token", result.newToken);
+
+                alert('Log-In successfull');
+                window.location.href = "adminDashboard.html";
+            } catch (error) {
+                alert('Log-In failed! error code:404 | ADMIN ACCOUNT   NOT FOUND!!');
+                console.log(error);
+                window.location.href = "adminLogin.html";
+                return;
+            }  
+    }
+    </script>
+</body>
+</html>

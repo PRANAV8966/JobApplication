@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Registration</title>
+  <style>
+    body { font-family: Arial, sans-serif; display:flex; justify-content:center; align-items:center; height:100vh; background:#f4f4f4; }
+    .register-container {
+      background: #fff;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      width: 350px;
+    }
+    h2 { text-align: center; }
+    label { display: block; margin-top: 10px; font-weight: bold; }
+    input {
+      width: 100%; padding: 10px; margin-top: 5px;
+      border: 1px solid #ccc; border-radius: 5px;
+    }
+    button {
+      width: 100%; margin-top: 15px;
+      background: #28a745; color: white;
+      border: none; padding: 10px; border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover { background: #218838; }
+    .message { margin-top: 10px; text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="register-container">
+    <h2>Admin Registration</h2>
+    <form id="adminRegisterForm">
+      <label for="name">Full Name</label>
+      <input type="text" id="name" name="name" required>
+      
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" required>
+      
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" required>
+
+      <label for="companyName">companyName</label>
+      <input type="text" id="companyName" name="companyName" required>
+      
+      <button type="submit">Register</button>
+      <div class="message" id="message"></div>
+    </form>
+  </div>
+  <div style="display:block;">
+  <p>Already have an admin account? <a href="adminLogin.html">Login here</a></p>
+</div>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script>
+    const ip = "localhost"; 
+    const form = document.getElementById("adminRegisterForm");
+    const messageDiv = document.getElementById("message");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById("name").value;
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const companyName = document.getElementById("companyName").value;
+
+      try {
+        const response = await axios.post(`http://${ip}:3000/api/registerAdmin`, {
+          name, email, password, companyName
+        });
+
+        if (response.data.success) {
+          messageDiv.style.color = "green";
+          messageDiv.textContent = "Admin registered successfully!";
+          form.reset();
+        } else {
+          messageDiv.style.color = "red";
+          messageDiv.textContent = response.data.message || "Registration failed";
+        }
+      } catch (error) {
+        console.error(error);
+        messageDiv.style.color = "red";
+        messageDiv.textContent = "Something went wrong please try again later!";
+      }
+    });
+  </script>
+</body>
+</html>

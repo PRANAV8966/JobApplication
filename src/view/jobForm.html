@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Add Job</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background: #fff;
+      padding: 25px 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      width: 350px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    label {
+      font-weight: bold;
+      margin-bottom: 6px;
+      display: block;
+      color: #444;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: 0.3s;
+    }
+
+    input:focus, select:focus {
+      border-color: #4CAF50;
+      outline: none;
+      box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #4CAF50;
+      border: none;
+      color: #fff;
+      font-size: 16px;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #45a049;
+    }
+
+    .back-link {
+      text-align: center;
+      margin-top: 15px;
+    }
+
+    .back-link a {
+      text-decoration: none;
+      color: #4CAF50;
+      font-size: 14px;
+      transition: 0.3s;
+    }
+
+    .back-link a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Add a Job</h2>
+    <form id="jobForm">
+      <label>Description:</label>
+      <input type="text" id="description" required>
+
+      <label>Expiry Date:</label>
+      <input type="date" id="expiry" required>
+
+      <label>Status:</label>
+      <select id="status" required>
+        <option value="ACTIVE">ACTIVE</option>
+        <option value="EXPIRED">EXPIRED</option>
+      </select>
+
+      <button type="submit">Add Job</button>
+    </form>
+
+    <div class="back-link">
+      <a href="index.html">← Back to Dashboard</a>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script>
+    document.getElementById('jobForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const ip = "localhost";
+
+  const description = document.getElementById('description').value;
+  const expiry = document.getElementById('expiry').value;
+  const status = document.getElementById('status').value;
+
+  
+  const adminId = localStorage.getItem('adminId');
+
+  if (!adminId) {
+    alert('You must be logged in as Admin to post a job');
+    return;
+  }
+
+  try {
+    const response = await axios.post(`http://${ip}:3000/api/createJob`, {
+      description,
+      expiry,
+      status,
+      adminId
+    });
+
+    alert('Job added successfully!');
+    document.getElementById('jobForm').reset();
+
+  } catch (err) {
+    console.error('Request failed:', err);
+    if (err.response && err.response.data && err.response.data.error) {
+      alert('Error: ' + err.response.data.error);
+    } else {
+      alert('Something went wrong');
+    }
+  }
+});
+
+  </script>
+</body>
+</html>
