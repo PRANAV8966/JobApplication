@@ -36,9 +36,19 @@ class JobService {
         }
      }
 
-     async getAllJobs(adminId) {
+     async getAllJobsById(adminId) {
         try {
-            const admins = await this.jobService.getAllJobs(adminId);
+            const admins = await this.jobService.getAllJobsById(adminId);
+            return admins;
+        } catch (error) {
+            console.log('some error occured at service', error);
+            throw error;
+        }
+     }
+
+     async getAllJobs(id) {
+        try {
+            const admins = await this.jobService.getAllJobs(id);
             return admins;
         } catch (error) {
             console.log('some error occured at service', error);

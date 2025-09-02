@@ -4,17 +4,25 @@
   <meta charset="UTF-8">
   <title>Job Listings</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    #h1 {
-        text-align: center ;
+    body { 
+      font-family: Arial, sans-serif; 
+      margin: 20px; 
+      background: #f9f9f9;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
     }
     .job-card {
-      border: 1px solid #ccc;
+      background: white;
+      border: 1px solid #ddd;
       padding: 15px;
       margin-bottom: 15px;
       border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
-    .job-card h3 { margin: 0; }
+    .job-card h3 { margin: 0 0 10px; color: #007BFF; }
+    .job-card p { margin: 5px 0; color: #555; }
     button {
       background: #007BFF;
       color: white;
@@ -25,43 +33,80 @@
       margin-top: 10px;
     }
     button:hover { background: #0056b3; }
+    .back-btn {
+      display: block;
+      width: max-content;
+      margin: 0 auto 20px auto;
+      padding: 10px 20px;
+      background: #3498db;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: background 0.3s;
+    }
   </style>
 </head>
 <body>
-  <h1 id="h1">Available Job Listings</h1>
+  <a href="dashboard.html" class="back-btn">⬅ Back to Dashboard</a>
+  <h1>Available Job Listings</h1>
   <div id="job-list"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script>
-    const ip = "localhost"; 
+    const ip = "localhost";
+    const token = sessionStorage.getItem('token');
 
     async function loadJobs() {
       try {
-        const response = await axios.get(`http://${ip}:3000/api/getJobs`);
-        const jobs = response.data.jobs; 
+        const response = await axios.get(`http://${ip}:3000/api/getAppliedJobs`,{
+          headers: { Authorization: token }
+        });
+        
+        const jobs = response.data.data;
+        console.log('this is the result', jobs);
 
         const jobList = document.getElementById("job-list");
         jobList.innerHTML = "";
+
+        if (!jobs || jobs.length === 0) {
+          jobList.innerHTML = "<p>No jobs available at the moment.</p>";
+          return;
+        }
 
         jobs.forEach(job => {
           const div = document.createElement("div");
           div.classList.add("job-card");
           div.innerHTML = `
-            <h3>${job.title}</h3>
-            <p><strong>Location:</strong> ${job.location}</p>
-            <p><strong>Description:</strong> ${job.description}</p>
+            <h3>${job.title || "Untitled Job"}</h3>
+            <p><strong>Location:</strong> ${job.location || "Not specified"}</p>
+            <p><strong>Description:</strong> ${job.description || "No description"}</p>
             <button onclick="applyJob(${job.id})">Apply</button>
           `;
           jobList.appendChild(div);
         });
       } catch (err) {
         console.error("Error loading jobs:", err);
+        document.getElementById("job-list").innerHTML = 
+          "<p style='color:red'>Failed to load jobs. Please try again later.</p>";
       }
     }
+     async function applyJob(jobId) {
+        try {
+          const response = await axios.post(`http://${ip}:3000/api/creatEntry`, 
+            { jobId }, 
+            { headers: { Authorization: token } }
+          );
 
-    function applyJob(jobId) {
-      window.location.href = `apply-job.html?jobId=${jobId}`;
-    }
+          if (response.data.success) {
+            alert("Job applied successfully!");
+            const jobCard = document.querySelector(`button[onclick="applyJob(${jobId})"]`).parentElement;
+            jobCard.remove();
+          }
+        } catch (error) {
+          console.log("Error applying for job:", error);
+          alert("Failed to apply for the job.");
+        }
+      }
 
     loadJobs();
   </script>

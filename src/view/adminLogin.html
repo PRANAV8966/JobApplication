@@ -44,7 +44,7 @@
                     return;
                 }
 
-                localStorage.setItem("token", result.newToken);
+                sessionStorage.setItem("token", result.newToken);
 
                 alert('Log-In successfull');
                 window.location.href = "adminDashboard.html";

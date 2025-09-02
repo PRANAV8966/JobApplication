@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Applications</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f7fa;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background: #0077cc;
+      color: white;
+      padding: 15px;
+      text-align: center;
+    }
+
+    .back-btn {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 8px 15px;
+      background: white;
+      color: #0077cc;
+      text-decoration: none;
+      border-radius: 5px;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+    .back-btn:hover {
+      background: #e6f2ff;
+    }
+
+    h2 {
+      text-align: center;
+      margin-top: 20px;
+      color: #333;
+    }
+
+    #applicationsList {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 0 15px;
+    }
+
+    .application-card {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      transition: transform 0.2s ease;
+    }
+
+    .application-card:hover {
+      transform: scale(1.02);
+    }
+
+    .application-card h3 {
+      margin: 0 0 10px 0;
+      color: #0077cc;
+    }
+
+    .application-card p {
+      margin: 5px 0;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>My Applications</h1>
+    <a href="dashboard.html" class="back-btn">← Back to Dashboard</a>
+  </header>
+
+  <div id="applicationsList"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+    const token = sessionStorage.getItem("token");
+    const userId = sessionStorage.getItem("userId");
+    const container = document.getElementById("applicationsList");
+
+    try {
+      const res = await axios.get(`http://localhost:3000/api/myapplication/${userId}`, {
+        headers: { Authorization: token }
+      });
+
+      if (res.data.success) {
+        const appliedJobs = res.data.data;
+
+        if (appliedJobs.length === 0) {
+          container.innerHTML = "<p style='text-align:center;'>No applications found</p>";
+          return;
+        }
+
+        appliedJobs.forEach(app => {
+          const div = document.createElement("div");
+          div.classList.add("application-card");
+
+          div.innerHTML = `
+            <h3>${app.job.title}</h3>
+            <p><b>Description:</b> ${app.job.description}</p>
+            <p><b>Status:</b> ${app.status}</p>
+            <p><b>Expiry:</b> ${new Date(app.job.expiry).toLocaleDateString()}</p>
+          `;
+
+          container.appendChild(div);
+        });
+      }
+    } catch (err) {
+      console.error("Error fetching applied jobs:", err);
+      container.innerHTML = "<p style='text-align:center; color:red;'>Failed to load applications.</p>";
+    }
+  });
+  </script>
+</body>
+</html>

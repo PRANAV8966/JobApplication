@@ -95,6 +95,9 @@
       <label>Expiry Date:</label>
       <input type="date" id="expiry" required>
 
+      <label>Title:</label>
+      <input type="text" id="title" required>
+
       <label>Status:</label>
       <select id="status" required>
         <option value="ACTIVE">ACTIVE</option>
@@ -117,9 +120,10 @@
   const description = document.getElementById('description').value;
   const expiry = document.getElementById('expiry').value;
   const status = document.getElementById('status').value;
+  const title = document.getElementById('title').value;
 
   
-  const adminId = localStorage.getItem('adminId');
+  const adminId = sessionStorage.getItem('adminId');
 
   if (!adminId) {
     alert('You must be logged in as Admin to post a job');
@@ -131,7 +135,8 @@
       description,
       expiry,
       status,
-      adminId
+      adminId,
+      title
     });
 
     alert('Job added successfully!');

@@ -100,7 +100,7 @@
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script>
     const ip = "localhost"; // change to your server IP
-    const adminId = localStorage.getItem("adminId"); // assuming stored after login
+    const adminId = sessionStorage.getItem("adminId"); // assuming stored after login
 
     async function loadJobs() {
       try {
@@ -129,6 +129,7 @@
       } catch (err) {
         console.error(err);
         alert("Failed to load jobs");
+        window.location.href = "adminLogin.html";
       }
     }
 

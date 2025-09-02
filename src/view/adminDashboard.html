@@ -163,7 +163,7 @@ main {
     const ip = "localhost";
 
     async function loadUserProfile() {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
 
       if (!token) {
         alert("Unauthorized! Please log in again.");
@@ -179,7 +179,7 @@ main {
 
         document.getElementById("userName").innerText = admin.data.name;
         document.getElementById("userEmail").innerText = admin.data.email;
-        localStorage.setItem('adminId', admin.data.id)
+        sessionStorage.setItem('adminId', admin.data.id)
       } catch (error) {
         console.error("Error fetching profile:", error);
         alert("Session expired or invalid token. Please log in again.");
@@ -188,7 +188,7 @@ main {
     }
 
     function logout() {
-      localStorage.removeItem("token");
+      sessionStorage.removeItem("token");
       alert("Logged out successfully!");
       window.location.href = "adminLogin.html";
     }

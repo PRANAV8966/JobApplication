@@ -15,6 +15,11 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "adminId",
         as: "admin"
       });
+
+       Job.hasMany(models.myJob, {
+        foreignKey: "jobId",
+        as: "job"
+      });
     }
   }
   Job.init({
@@ -34,6 +39,9 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.ENUM('ACTIVE', 'EXPIRED'),
         defaultValue: 'ACTIVE',
       },
+    title: {
+      type:DataTypes.STRING
+    },
   }, {
     sequelize,
     modelName: 'Job',
