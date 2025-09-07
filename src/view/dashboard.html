@@ -134,6 +134,20 @@ main {
   }
 }
 
+#updateResumeBtn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+#updateResumeBtn:hover {
+    background-color: #45a049;
+  }
+
   </style>
 </head>
 <body>
@@ -154,7 +168,10 @@ main {
         <h2>Actions</h2>
         <button onclick="window.location.href='jobListings.html'">Apply for Jobs</button>
         <button onclick="window.location.href='myapplication.html'">My Applications</button>
-        <button onclick="window.location.href='uploadFile.html'">Update Resume</button>
+        <!-- <button onclick="window.location.href='uploadFile.html'">Update Resume</button> -->
+         <button id="updateResumeBtn">Update Resume</button>
+         <input type="file" id="resumeFile" style="display: none;" multiple />
+
       </section>
     </main>
   </div>
@@ -187,6 +204,52 @@ main {
         window.location.href = "index.html";
       }
     }
+
+      const fileInput = document.getElementById("resumeFile");
+      const updateBtn = document.getElementById("updateResumeBtn");
+
+      updateBtn.addEventListener("click", () => {
+        fileInput.click(); // opens file explorer
+      });
+
+      fileInput.addEventListener("change", async () => {
+        const file = fileInput.files[0];
+
+        if (!file) {
+          alert("Please select a file");
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append("resume", file);
+
+        const token = sessionStorage.getItem("token");
+        const userId = sessionStorage.getItem('userId');
+
+        try {
+          const res = await axios.put("http://localhost:3000/api/uploadResume", formData, {
+            headers: {
+              Authorization: token,
+              "Content-Type": "multipart/form-data"
+            }
+          });
+
+          alert("Resume uploaded successfully!");
+          console.log("Resume URL:",res.data.url); 
+          const resumeUrl = res.data.url;
+
+          await axios.put("http://localhost:3000/api/saveResume", {
+            userId,
+            resumeUrl
+          }, {
+            headers: { Authorization: token }
+          });
+        } catch (err) {
+          console.error("Error uploading resume:", err);
+          alert("Upload failed");
+        }
+      });
+
 
     function logout() {
       sessionStorage.removeItem("token");

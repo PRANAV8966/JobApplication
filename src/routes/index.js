@@ -1,11 +1,13 @@
 const { Router } = require('express');
 const router = Router();
 
-const { createUser, getUser, getAllUser, signIn }  = require('../controllers/user-controller.js');
+const { createUser, getUser, getAllUser, signIn, uploadResume, saveResume }  = require('../controllers/user-controller.js');
 const {createAdmin, getAllAdmin, getAdmin, AdminSignIn} = require('../controllers/admin-controller.js');
 const { createJob, getAllJobs, getJob, getAllJobsById, create, getAvailableJobs, getAppliedJobsByUser } = require('../controllers/job-controller.js');
 const { authenticate } = require('../middlewares/auth-middleware.js');
 const { authenticateAdmin } =  require('../middlewares/admin-auth.js');
+const upload  = require('../middlewares/multer.js');
+
 
 router.get('/getUser',authenticate, getUser);
 router.get('/getAdmin', authenticateAdmin, getAdmin);
@@ -21,6 +23,8 @@ router.post('/adminSignIn', AdminSignIn);
 router.post('/createJob', createJob);
 router.post('/creatEntry',authenticate, create);
 
+router.put('/saveResume',authenticate, saveResume);
 
+router.put('/uploadResume', authenticate, upload.single('resume'), uploadResume);
 
 module.exports = router;
