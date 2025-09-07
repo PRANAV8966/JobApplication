@@ -2,6 +2,20 @@ const db = require('../models/index.js');
 const resume = db.Resume;
 
 class ResumeRepository {
+
+    async findResume(userId) {
+        try {
+            const url = await resume.findOne({
+                where: {
+                    userId: userId
+                }
+            });
+            return url;
+        } catch (error) {
+            console.log('some error occured at repo');
+            throw error;
+        }
+    }
     async create(data) {
         try {
             await resume.create(data);
@@ -12,13 +26,9 @@ class ResumeRepository {
         }
     }
 
-    async update(data, userId) {
+    async update(newResumeUrl, userId) {
         try {
-            await resume.update({
-                where: {
-                    userId: userId
-                }
-            });
+            await resume.update({ resumeUrl: newResumeUrl }, { where: { userId: userId } });
             return true;
         } catch (error) {
             console.log('some error occured at repo', error);

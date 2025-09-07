@@ -107,24 +107,46 @@ const uploadResume = async (req, res) => {
 
 const saveResume = async (req, res) => {
     try {
-        await resumeRepository.create(req.body);
+        const existing = await resumeRepository.findResume(req.body.userId);
+        if (existing) {
+            await resumeRepository.update(req.body.resumeUrl, req.body.userId);
+        } else {
+            await resumeRepository.create(req.body);
+        }
         return res.status(200).json({
+            success: true,
+            message: 'Resume saved successfully',
+            error: {}
+        });
+    } catch (error) {
+        console.log('some error occured at controller', error);
+        return res.status(500).json({
+            data: {},
+            success: false,
+            message: 'failed to save resume',
+            error: error
+        });
+    }
+};
+const findResume = async (req, res) => {
+    try {
+        const url = await resumeRepository.findResume(req.params.userId);
+        return res.status(200).json({
+            data:url,
+            message:"successfully downloaded resume",
             success:true,
-            message: 'successfully Signed-In user',
             error:{}
         });
-         
     } catch (error) {
         console.log('some error occured at controller', error);
         return res.status(500).json({
             data:{},
             success:false,
-            message : 'failed to save resume',
+            message : 'failed to fetch resume',
             error:error
         });
     }
 }
-
 
 module.exports = {
     createUser,
@@ -132,5 +154,6 @@ module.exports = {
     getUser,
     signIn,
     saveResume,
-    uploadResume
+    uploadResume,
+    findResume
 }

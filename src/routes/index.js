@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const router = Router();
 
-const { createUser, getUser, getAllUser, signIn, uploadResume, saveResume }  = require('../controllers/user-controller.js');
+const { createUser, getUser, getAllUser, signIn, uploadResume, saveResume, findResume }  = require('../controllers/user-controller.js');
 const {createAdmin, getAllAdmin, getAdmin, AdminSignIn} = require('../controllers/admin-controller.js');
 const { createJob, getAllJobs, getJob, getAllJobsById, create, getAvailableJobs, getAppliedJobsByUser } = require('../controllers/job-controller.js');
 const { authenticate } = require('../middlewares/auth-middleware.js');
@@ -15,6 +15,7 @@ router.get('/getJobs/:adminId', getAllJobsById);
 router.get('/getAlljobs', getAllJobs);
 router.get('/getAppliedJobs',authenticate, getAvailableJobs);
 router.get('/myapplication/:userId', getAppliedJobsByUser);
+router.get('/getResume/:userId', findResume);
 
 router.post('/signUp', createUser);
 router.post('/signIn', signIn);
@@ -24,7 +25,6 @@ router.post('/createJob', createJob);
 router.post('/creatEntry',authenticate, create);
 
 router.put('/saveResume',authenticate, saveResume);
-
 router.put('/uploadResume', authenticate, upload.single('resume'), uploadResume);
 
 module.exports = router;

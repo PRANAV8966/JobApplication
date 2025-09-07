@@ -169,9 +169,10 @@ main {
         <button onclick="window.location.href='jobListings.html'">Apply for Jobs</button>
         <button onclick="window.location.href='myapplication.html'">My Applications</button>
         <!-- <button onclick="window.location.href='uploadFile.html'">Update Resume</button> -->
-         <button id="updateResumeBtn">Update Resume</button>
-         <input type="file" id="resumeFile" style="display: none;" multiple />
+        <button id="updateResumeBtn">Update Resume</button>
+        <input type="file" id="resumeFile" style="display: none;" multiple />
 
+        <button id="viewResumeBtn" style="display:block;">View Resume</button>
       </section>
     </main>
   </div>
@@ -209,7 +210,7 @@ main {
       const updateBtn = document.getElementById("updateResumeBtn");
 
       updateBtn.addEventListener("click", () => {
-        fileInput.click(); // opens file explorer
+        fileInput.click(); 
       });
 
       fileInput.addEventListener("change", async () => {
@@ -232,11 +233,8 @@ main {
               Authorization: token,
               "Content-Type": "multipart/form-data"
             }
-          });
-
-          alert("Resume uploaded successfully!");
-          console.log("Resume URL:",res.data.url); 
-          const resumeUrl = res.data.url;
+          }); 
+          let resumeUrl = res.data.url;
 
           await axios.put("http://localhost:3000/api/saveResume", {
             userId,
@@ -244,11 +242,34 @@ main {
           }, {
             headers: { Authorization: token }
           });
+          alert("Resume uploaded successfully!");
         } catch (err) {
           console.error("Error uploading resume:", err);
           alert("Upload failed");
         }
       });
+
+      const viewResumeBtn = document.getElementById("viewResumeBtn");
+
+    viewResumeBtn.addEventListener("click", async () => {
+      const token = sessionStorage.getItem("token");
+      const userId = sessionStorage.getItem("userId");
+
+      try {
+        const res = await axios.get(`http://${ip}:3000/api/getResume/${userId}`, {
+          headers: { Authorization: token }
+        });
+        console.log(res.data.data);
+        if (res.data.data.resumeUrl) {
+          window.open(res.data.data.resumeUrl, "_blank");
+        } else {
+          alert("No resume found for your account.");
+        }
+      } catch (err) {
+        console.log('error', err);
+        alert("Error fetching resume.");
+      }
+    });
 
 
     function logout() {
